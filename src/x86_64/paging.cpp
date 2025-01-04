@@ -11,7 +11,7 @@ auto  _paging_memset_( void    *dest,
                        uint64_t size ) -> void *;
 Paging::Paging( PagingInitializationInformation *info ) noexcept {
     this->allocater           = info->allocater;
-    this->destoryer           = info->destoryer;
+    this->collector           = info->collector;
     this->physical_to_virtual = info->physical_to_virtual;
     this->virtual_to_physical = info->virtual_to_physical;
     uint64_t rax { }, rbx { }, rcx { }, rdx { }, mop { 0x7 }, sop { 0 };
@@ -87,12 +87,12 @@ auto pmlxt::map( IN uint64_t physics_address, IN uint64_t virtual_address, IN ui
                         }
                         // After we delete the all of page tables that under the old page table,
                         // We also ought to delete this old page table
-                        Paging::destoryer( Paging::virtual_to_physical( (uint64_t)get_table( level - 1 ).get_table( ) ) );
+                        Paging::collector( Paging::virtual_to_physical( (uint64_t)get_table( level - 1 ).get_table( ) ) );
                     }
                     else if ( level == 1 ) {
                         // Delete this page table
                         // Then return. Because there is no page table under the pml1t.
-                        Paging::destoryer( Paging::virtual_to_physical( (uint64_t)pmlx_t.get_table( ) ) );
+                        Paging::collector( Paging::virtual_to_physical( (uint64_t)pmlx_t.get_table( ) ) );
                     }
                     return;
                 };
@@ -168,12 +168,12 @@ auto pmlxt::unmap( IN uint64_t virtual_address, IN size_t size, IN MemoryPageTyp
                         }
                         // After we delete the all of page tables that under the old page table,
                         // We also ought to delete this old page table
-                        Paging::destoryer( Paging::virtual_to_physical( (uint64_t)get_table( level - 1 ).get_table( ) ) );
+                        Paging::collector( Paging::virtual_to_physical( (uint64_t)get_table( level - 1 ).get_table( ) ) );
                     }
                     else if ( level == 1 ) {
                         // Delete this page table
                         // Then return. Because there is no page table under the pml1t.
-                        Paging::destoryer( Paging::virtual_to_physical( (uint64_t)pmlx_t.get_table( ) ) );
+                        Paging::collector( Paging::virtual_to_physical( (uint64_t)pmlx_t.get_table( ) ) );
                     }
                     return;
                 };

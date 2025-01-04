@@ -890,7 +890,7 @@ public:
 
 private:
     inline static Allocater allocater;
-    inline static Destoryer destoryer;
+    inline static Collector collector;
     inline static Converter physical_to_virtual;
     inline static Converter virtual_to_physical;
 };

@@ -12,12 +12,12 @@ enum MemoryPageType {
     PAGE_1G
 };
 typedef void *( *Allocater )( uint64_t );
-typedef void ( *Destoryer )( void * );
+typedef void ( *Collector )( void * );
 typedef void *( *Converter )( uint64_t );
 
 struct PagingInitializationInformation {
     Allocater      allocater;
-    Destoryer      destoryer;
+    Collector      collector;
     Converter      virtual_to_physical;
     Converter      physical_to_virtual;
     uint64_t       start_page;
