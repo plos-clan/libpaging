@@ -50,3 +50,6 @@ like this:
 /* Initialization process */
 Paging paging{&info};
 ```
+
+### map
+the map
