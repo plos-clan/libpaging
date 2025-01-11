@@ -254,25 +254,15 @@ auto pmlxt::copy( IN pmlxt &from ) -> void {
     _paging_memset_( this->pmlx_table, 0, PT_SIZE / 2 );
     _paging_memcpy_( this->pmlx_table + 256, from.get_table( ) + 256, PT_SIZE / 2 );
 }
-auto pmlxt::make( void ) -> pmlxt & {
-    this->pmlx_table = (uint64_t *)Paging::physical_to_virtual( (uint64_t)Paging::allocater( this->PT_SIZE ) );
-    _paging_memset_( this->pmlx_table, 0, this->PT_SIZE );
-    return *this;
+
+pmlxt::pmlxt( void ) noexcept :
+    can_allocate { true },
+    pmlx_table { (uint64_t *)Paging::physical_to_virtual( (uint64_t)Paging::allocater( this->PT_SIZE ) ) } {
 }
-pml1t::pml1t( void ) noexcept :
-    pmlxt( (uint64_t *)Paging::physical_to_virtual( (uint64_t)Paging::allocater( this->PT_SIZE ) ) ) {
-}
-pml2t::pml2t( void ) noexcept :
-    pmlxt( (uint64_t *)Paging::physical_to_virtual( (uint64_t)Paging::allocater( this->PT_SIZE ) ) ) {
-}
-pml3t::pml3t( void ) noexcept :
-    pmlxt( (uint64_t *)Paging::physical_to_virtual( (uint64_t)Paging::allocater( this->PT_SIZE ) ) ) {
-}
-pml4t::pml4t( void ) noexcept :
-    pmlxt( (uint64_t *)Paging::physical_to_virtual( (uint64_t)Paging::allocater( this->PT_SIZE ) ) ) {
-}
-pml5t::pml5t( void ) noexcept :
-    pmlxt( (uint64_t *)Paging::physical_to_virtual( (uint64_t)Paging::allocater( this->PT_SIZE ) ) ) {
+pmlxt::~pmlxt( void ) noexcept {
+    if ( this->can_allocate ) {
+        Paging::collector( Paging::virtual_to_physical( (uint64_t)this->pmlx_table ) );
+    }
 }
 
 void initialize_paging( PagingInitializationInformation *info ) {
